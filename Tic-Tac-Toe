@@ -1,0 +1,109 @@
+import java.awt.Color;
+import static java.awt.Color.BLACK;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import java.awt.GridLayout;
+
+public class Game implements ActionListener {
+    private static JButton[] jb;
+    private static JFrame f1;
+    private static JPanel p1;
+    private boolean playerTurn;
+    private static int moveCount = 0;
+
+    Game() {
+        p1 = new JPanel();
+        f1 = new JFrame("TIC-TAC-TOE");
+        f1.setSize(400, 400);
+        f1.setBackground(BLACK);
+        f1.getContentPane().setBackground(Color.DARK_GRAY);
+        f1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f1.setLayout(null);  // Using null layout for simplicity
+        p1.setLayout(new GridLayout(3,3));
+        p1.setBounds(90,80,200,150);
+        jb = new JButton[9];
+        for (int i = 0; i < 9; i++) {
+            jb[i] = new JButton();
+            // Set bounds for each button to avoid overlapping
+            jb[i].setBackground(Color.lightGray);
+              
+            jb[i].addActionListener(this);
+            p1.add(jb[i]);
+        }
+        
+        f1.add(p1);
+        f1.setVisible(true);
+        
+        
+    }
+
+
+   @Override
+public void actionPerformed(ActionEvent e) {
+    JButton j = (JButton) e.getSource();
+    // Only set the text if the button is empty
+    if (j.getText().isEmpty()) {
+        if (playerTurn) {
+            j.setText("X");
+        } else {
+            j.setText("0");
+        }
+
+        moveCount++;
+
+        if (CheckForWin()) {
+            JOptionPane.showMessageDialog(f1, "Player " + (playerTurn ? "X" : "0") + " Won!", "Game Over", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        if (moveCount == 9) {
+            JOptionPane.showMessageDialog(f1, "Nobody Won", "Game Over", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        playerTurn = !playerTurn;
+    }
+}
+
+ public static boolean CheckForWin() {
+    // Check rows
+    for (int i = 0; i < 3; i++) {
+        if (!jb[i * 3].getText().isEmpty() &&
+            jb[i * 3].getText().equals(jb[i * 3 + 1].getText()) &&
+            jb[i * 3 + 1].getText().equals(jb[i * 3 + 2].getText())) {
+            return true;
+        }
+    }
+
+    // Check columns
+    for (int i = 0; i < 3; i++) {
+        if (!jb[i].getText().isEmpty() &&
+            jb[i].getText().equals(jb[i + 3].getText()) &&
+            jb[i + 3].getText().equals(jb[i + 6].getText())) {
+            return true;
+        }
+    }
+
+    // Check diagonals
+    if (!jb[0].getText().isEmpty() &&
+        jb[0].getText().equals(jb[4].getText()) &&
+        jb[4].getText().equals(jb[8].getText())) {
+        return true;
+    }
+
+    if (!jb[2].getText().isEmpty() &&
+        jb[2].getText().equals(jb[4].getText()) &&
+        jb[4].getText().equals(jb[6].getText())) {
+        return true;
+    }
+
+    return false;
+}
+ public static void main(String[] args) {
+        Game g1 = new Game();
+    }
+}
